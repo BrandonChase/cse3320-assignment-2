@@ -1,0 +1,20 @@
+CXX= g++ -std=c++11
+CXXFLAGS= -Wall -g
+LDFLAGS= 
+INCLUDE= 
+
+SRCDIR= ./src
+BINDIR= ./bin
+MAINTARGET= $(BINDIR)/part1
+SORTTARGET= $(BINDIR)/sort
+
+MAINSOURCE= $(SRCDIR)/main.cpp
+SORTSOURCE= $(SRCDIR)/sort.cpp
+
+all: 
+	mkdir -p $(BINDIR)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(MAINSOURCE) $(LDFLAGS) -o $(MAINTARGET)
+	$(CXX) $(CXXFLAGS) $(INCLUDE) $(SORTSOURCE) $(LDFLAGS) -o $(SORTTARGET)
+
+clean:
+	rm $(MAINTARGET) $(SORTTARGET)
