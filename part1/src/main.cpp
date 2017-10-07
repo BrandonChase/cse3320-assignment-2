@@ -17,6 +17,7 @@ using namespace std;
 const string INPUT_FILENAME = "../earthquakes.csv";
 const string TEMP_FILENAME = "latitudes";
 const string SORT_PROGRAM_PATH = "./bin/sort";
+const int nums_of_processes[] = {1, 2, 4, 8};
 
 long timeSort(deque<double> content, int num_lines, int num_processes);
 deque<double> loadLatitudes(string filename);
@@ -31,30 +32,55 @@ long timeSortTest(deque<double> content, int num_lines, int num_processes);
 
 int main(int argc, const char * argv[])
 {
-	//-----TESTING-----
-	deque<double> data;
-	int lines, processes;
-	cout << "***IN TEST MODE***" << endl;
-	cout << "How many lines: ";
-	cin >> lines;
-	cout << "How many processes: ";
-	cin >> processes;
-	assert(lines > 0 && processes > 0);
-
-	for(int i = 0; i < lines; i++)
-	{
-		data.push_front(i); //data will be in reverse order
-	}
+	
 	deque<double> latitudes = loadLatitudes(INPUT_FILENAME);
-	cout << "there are " << latitudes.size() << " latitudes starting out" << endl;
-	cout << "Sort took " << timeSortTest(latitudes, latitudes.size(), processes) << " ms using " << processes << " processes." << endl;
-	//ask if user wants to do custom parameters for sort and get parameters
-	//if user specifies, do their desired operation
-	//if not, do for 1, 2, 4, and 10 processes
-	//load data as vector of strings
-	//call the time to sort and print out results
+	bool wants_to_go_again;
+	do
+	{
+		//ask if user wants to do custom parameters for sort and get parameters
+		cout << "Do you want to enter custom parameters? [y] or [n]: ";
+		char input;
+		cin >> input;
+		if(input == 'y') //custom behaivor
+		{
+			int lines, processes;
+			cout << "How many lines of latitude? [9736 max]: ";
+			cin >> lines;
+			cout << "How many processes to run sort on?: ";
+			cin >> processes;
+			assert(lines > 0 && processes > 0);
+			cout << "Customized sort took " << timeSort(latitudes, lines, processes) / 1000.0 << "s using " << processes << " process(es)." << endl;
+		}
+		else if(input == 's')//special mode
+		{
+			deque<double> data;
+			int lines, processes;
+			cout << "How many numbers to sort?: ";
+			cin >> lines;
+			cout << "How many processes to run sort on?: ";
+			cin >> processes;
+			for(int i = 0; i < lines / 2; i++) { data.push_front(i); data.push_front(-i);}
+			assert(lines > 0 && processes > 0);
+			cout << "Customized sort took " << timeSort(data, lines, processes) / 1000.0 << "s using " << processes << " process(es)." << endl;
+			for(int num_of_processes : nums_of_processes)
+			{
+				cout << "Sort took " << timeSort(data, data.size(), num_of_processes) / 1000.0 << "s using " << num_of_processes << " process(es)." << endl;
+			}
+		}
+		else //predefined behaivor
+		{
+			for(int num_of_processes : nums_of_processes)
+			{
+				cout << "Sort took " << timeSort(latitudes, latitudes.size(), num_of_processes) / 1000.0 << "s using " << num_of_processes << " process(es)." << endl;
+			}
+		}
+
+		cout << "Go again? [y] or [n]: ";
+		cin >> input;
+		if(input == 'y') { wants_to_go_again = true; }
+		else { wants_to_go_again = false; }
+	}while(wants_to_go_again);	
 	//delete temp files
-	//save sorted que
 	return 0;
 }
 
@@ -67,10 +93,10 @@ Returns: 		the time in seconds it takes to do the sort
 long timeSort(deque<double> content, int num_lines, int num_processes)
 {
 	//start timer
-	//auto start = chrono::high_resolution_clock::now();
+	auto start = chrono::high_resolution_clock::now();
 	//split data into chunks and save chunks
 	splitAndSave(TEMP_FILENAME, content, num_lines, num_processes);
-	auto start = chrono::high_resolution_clock::now(); //remove
+	
 	performParallelSort(num_processes);
 
 	//read sorted chunks into lists
@@ -83,11 +109,10 @@ long timeSort(deque<double> content, int num_lines, int num_processes)
 
 	//merge chunks using list of lists and doing top of deck of cards process
 	deque<double> sorted_latitudes = mergeDataChunks(chunks);
-	auto end = chrono::high_resolution_clock::now(); //remove
 	//save sorted list to file?
 	saveContent("sorted.txt", sorted_latitudes);
 	//stop timer and return how long it took
-	//auto end = chrono::high_resolution_clock::now();
+	auto end = chrono::high_resolution_clock::now();
     return chrono::duration_cast<chrono::milliseconds>(end-start).count();
 }
 
