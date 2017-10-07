@@ -45,8 +45,9 @@ int main(int argc, const char * argv[])
 	{
 		data.push_front(i); //data will be in reverse order
 	}
-
-	cout << "Sort took " << timeSortTest(data, lines, processes) << " ms using " << processes << " processes." << endl;
+	deque<double> latitudes = loadLatitudes(INPUT_FILENAME);
+	cout << "there are " << latitudes.size() << " latitudes starting out" << endl;
+	cout << "Sort took " << timeSortTest(latitudes, latitudes.size(), processes) << " ms using " << processes << " processes." << endl;
 	//ask if user wants to do custom parameters for sort and get parameters
 	//if user specifies, do their desired operation
 	//if not, do for 1, 2, 4, and 10 processes
@@ -95,12 +96,19 @@ long timeSortTest(deque<double> content, int num_lines, int num_processes)
 	//start timer
 	//auto start = chrono::high_resolution_clock::now();
 	//split data into chunks and save chunks
+	auto real_start = chrono::high_resolution_clock::now(); //remove
 	splitAndSave(TEMP_FILENAME, content, num_lines, num_processes);
+	cout << "INSPECT FILE BEFORE SORTING\n";
+	char c;
+	cin >> c;
 	auto start = chrono::high_resolution_clock::now(); //remove
 	performParallelSort(num_processes);
 	auto end = chrono::high_resolution_clock::now(); //remove
 	cout << "parallel sort took " << chrono::duration_cast<chrono::milliseconds>(end-start).count() << " ms\n";
 
+	cout << "INSPECT FILE AFTER SORTING BEFORE MERGING\n";
+	c;
+	cin >> c;
 	//read sorted chunks into lists
 	start = chrono::high_resolution_clock::now(); //remove
 	deque<deque<double>> chunks;
@@ -114,6 +122,7 @@ cout << "loading sorted lists took " << chrono::duration_cast<chrono::millisecon
 	//merge chunks using list of lists and doing top of deck of cards process
 start = chrono::high_resolution_clock::now(); //remove
 	deque<double> sorted_latitudes = mergeDataChunks(chunks);
+	cout << "there are " << sorted_latitudes.size() << " latitiudes after sorting" << endl;
 	end = chrono::high_resolution_clock::now(); //remove
 	cout << "merging sorted lists took " << chrono::duration_cast<chrono::milliseconds>(end-start).count() << " ms\n";
 	//save sorted list to file?
@@ -123,7 +132,7 @@ start = chrono::high_resolution_clock::now(); //remove
 	cout << "saving sorted lists took " << chrono::duration_cast<chrono::milliseconds>(end-start).count() << " ms\n";
 	//stop timer and return how long it took
 	//auto end = chrono::high_resolution_clock::now();
-    return 1;
+    return chrono::duration_cast<chrono::milliseconds>(end-real_start).count();
 }
 
 // Loads the latitiudes of earthquakes (doubles) from a file into a deque. 

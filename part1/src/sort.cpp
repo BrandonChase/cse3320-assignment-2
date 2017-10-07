@@ -99,6 +99,8 @@ void insertInto(deque<double>& data, double item)
 			else if(i == data.size() - 1) 
 			{
 				data.push_back(item);
+				break; //break out of loop here b/c if insert at end, then list size grows by one and loop 
+						//actually goes again and then does first if insert without this break
 			}
 		}
 	}
