@@ -10,6 +10,7 @@
 #include <assert.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdio.h>
 
 using namespace std;
 
@@ -29,6 +30,7 @@ deque<double> mergeDataChunks(deque<deque<double>> chunks);
 deque<double> loadContent(string filename);
 void saveContent(string filename, deque<double> data);
 long timeSortTest(deque<double> content, int num_lines, int num_processes);
+void removeTempFiles(int num_processes, string filename);
 
 int main(int argc, const char * argv[])
 {
@@ -50,6 +52,7 @@ int main(int argc, const char * argv[])
 			cin >> processes;
 			assert(lines > 0 && processes > 0);
 			cout << "Customized sort took " << timeSort(latitudes, lines, processes) / 1000.0 << "s using " << processes << " process(es)." << endl;
+			removeTempFiles(processes, TEMP_FILENAME);
 		}
 		else if(input == 's')//special mode
 		{
@@ -62,9 +65,11 @@ int main(int argc, const char * argv[])
 			for(int i = 0; i < lines / 2; i++) { data.push_front(i); data.push_front(-i);}
 			assert(lines > 0 && processes > 0);
 			cout << "Customized sort took " << timeSort(data, lines, processes) / 1000.0 << "s using " << processes << " process(es)." << endl;
+			removeTempFiles(processes, TEMP_FILENAME);
 			for(int num_of_processes : nums_of_processes)
 			{
 				cout << "Sort took " << timeSort(data, data.size(), num_of_processes) / 1000.0 << "s using " << num_of_processes << " process(es)." << endl;
+				removeTempFiles(num_of_processes, TEMP_FILENAME);
 			}
 		}
 		else //predefined behaivor
@@ -72,6 +77,7 @@ int main(int argc, const char * argv[])
 			for(int num_of_processes : nums_of_processes)
 			{
 				cout << "Sort took " << timeSort(latitudes, latitudes.size(), num_of_processes) / 1000.0 << "s using " << num_of_processes << " process(es)." << endl;
+				removeTempFiles(num_of_processes, TEMP_FILENAME);
 			}
 		}
 
@@ -79,9 +85,22 @@ int main(int argc, const char * argv[])
 		cin >> input;
 		if(input == 'y') { wants_to_go_again = true; }
 		else { wants_to_go_again = false; }
+
 	}while(wants_to_go_again);	
 	//delete temp files
 	return 0;
+}
+
+void removeTempFiles(int num_processes, string filename)
+{
+	for(int i = 0; i < num_processes; i++)
+	{
+		string temp_filename = filename + to_string(i);
+		if(remove(temp_filename.c_str( )) !=0)
+		{
+           cerr << "Failed to remove file: " << temp_filename << endl;
+		}
+	}
 }
 
 /*
