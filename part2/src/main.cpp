@@ -47,10 +47,10 @@ int main(int argc, const char * argv[])
 			int lines, processes;
 			cout << "How many lines of latitude? [9736 max]: ";
 			cin >> lines;
-			cout << "How many processes to run sort on?: ";
+			cout << "How many threads to run sort on?: ";
 			cin >> processes;
 			assert(lines > 0 && processes > 0);
-			cout << "Customized sort took " << timeSort(latitudes, lines, processes) / 1000.0 << "s using " << processes << " process(es)." << endl;
+			cout << "Customized sort took " << timeSort(latitudes, lines, processes) / 1000.0 << "s using " << processes << " thread(s)." << endl;
 		}
 		else if(input == 's')//special mode
 		{
@@ -58,22 +58,22 @@ int main(int argc, const char * argv[])
 			int lines, processes;
 			cout << "How many numbers to sort?: ";
 			cin >> lines;
-			cout << "How many processes to run sort on?: ";
+			cout << "How many threads to run sort on?: ";
 			cin >> processes;
 			for(int i = 0; i < lines / 2; i++) { data.push_front(i); data.push_front(-i);}
 			assert(lines > 0 && processes > 0);
-			cout << "Customized sort took " << timeSort(data, lines, processes) / 1000.0 << "s using " << processes << " process(es)." << endl;
+			cout << "Customized sort took " << timeSort(data, lines, processes) / 1000.0 << "s using " << processes << " thread(s)." << endl;
 
 			for(int num_of_processes : nums_of_processes)
 			{
-				cout << "Sort took " << timeSort(data, data.size(), num_of_processes) / 1000.0 << "s using " << num_of_processes << " process(es)." << endl;
+				cout << "Sort took " << timeSort(data, data.size(), num_of_processes) / 1000.0 << "s using " << num_of_processes << " thread(s)." << endl;
 			}
 		}
 		else //predefined behaivor
 		{
 			for(int num_of_processes : nums_of_processes)
 			{
-				cout << "Sort took " << timeSort(latitudes, latitudes.size(), num_of_processes) / 1000.0 << "s using " << num_of_processes << " process(es)." << endl;
+				cout << "Sort took " << timeSort(latitudes, latitudes.size(), num_of_processes) / 1000.0 << "s using " << num_of_processes << " thread(s)." << endl;
 			}
 		}
 
