@@ -39,18 +39,33 @@ int main(int argc, const char * argv[])
 	do
 	{
 		//ask if user wants to do custom parameters for sort and get parameters
-		cout << "Do you want to enter custom parameters? [y] or [n]: ";
+		cout << "Do you want to enter custom parameters? [y]/[n], [s] for special mode: ";
 		char input;
 		cin >> input;
 		if(input == 'y') //custom behaivor
 		{
 			int lines, processes;
-			cout << "How many lines of latitude? [9736 max]: ";
-			cin >> lines;
-			cout << "How many processes to run sort on?: ";
-			cin >> processes;
+			do
+			{
+				cin.clear();
+        		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        		
+				cout << "How many lines of latitude? [9736 max]: ";
+				cin >> lines;
+			} while(cin.fail());
+
+			do
+			{
+				cin.clear();
+        		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        		
+				cout << "How many processes to run sort on?: ";
+				cin >> processes;
+			} while(cin.fail());
+
 			assert(lines > 0 && processes > 0);
 			if(lines > latitudes.size()) { lines = 9736; }
+			cout << "Performing Sort...\n" << endl;
 			cout << "Customized sort took " << timeSort(latitudes, lines, processes) / 1000.0 << "s using " << processes << " process(es)." << endl;
 			removeTempFiles(processes, TEMP_FILENAME);
 		}
@@ -58,22 +73,33 @@ int main(int argc, const char * argv[])
 		{
 			deque<double> data;
 			int lines, processes;
-			cout << "How many numbers to sort?: ";
-			cin >> lines;
-			cout << "How many processes to run sort on?: ";
-			cin >> processes;
+			do
+			{
+				cin.clear();
+        		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        		
+				cout << "How many numbers to sort?: ";
+				cin >> lines;
+			} while(cin.fail());
+
+			do
+			{
+				cin.clear();
+        		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        		
+				cout << "How many processes to run sort on?: ";
+				cin >> processes;
+			} while(cin.fail());
+
 			for(int i = 0; i < lines / 2; i++) { data.push_front(i); data.push_front(-i);}
 			assert(lines > 0 && processes > 0);
+			cout << "Performing Sort...\n" << endl;
 			cout << "Customized sort took " << timeSort(data, lines, processes) / 1000.0 << "s using " << processes << " process(es)." << endl;
 			removeTempFiles(processes, TEMP_FILENAME);
-			for(int num_of_processes : nums_of_processes)
-			{
-				cout << "Sort took " << timeSort(data, data.size(), num_of_processes) / 1000.0 << "s using " << num_of_processes << " process(es)." << endl;
-				removeTempFiles(num_of_processes, TEMP_FILENAME);
-			}
 		}
 		else //predefined behaivor
 		{
+			cout << "Performing Sort...\n" << endl;
 			for(int num_of_processes : nums_of_processes)
 			{
 				cout << "Sort took " << timeSort(latitudes, latitudes.size(), num_of_processes) / 1000.0 << "s using " << num_of_processes << " process(es)." << endl;
@@ -81,13 +107,14 @@ int main(int argc, const char * argv[])
 			}
 		}
 
-		cout << "Go again? [y] or [n]: ";
+		cout << "Go again? [y]/[n]: ";
 		cin >> input;
 		if(input == 'y') { wants_to_go_again = true; }
 		else { wants_to_go_again = false; }
 
 	}while(wants_to_go_again);	
 	//delete temp files
+	cout << endl << "Result of sort saved to sorted.txt" << endl;
 	return 0;
 }
 
