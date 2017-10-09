@@ -20,7 +20,7 @@ using namespace std;
 const string INPUT_FILENAME = "../earthquakes.csv";
 const string TEMP_FILENAME = "latitudes";
 const string SORT_PROGRAM_PATH = "./bin/sort";
-const int nums_of_processes[] = {1, 2, 4, 8};
+const int nums_of_processes[] = {1, 2, 4, 10};
 
 long timeSort(deque<double> content, int num_lines, int num_processes);
 deque<double> loadLatitudes(string filename);
@@ -50,6 +50,7 @@ int main(int argc, const char * argv[])
 			cout << "How many threads to run sort on?: ";
 			cin >> processes;
 			assert(lines > 0 && processes > 0);
+			if(lines > latitudes.size()) { lines = 9736; }
 			cout << "Customized sort took " << timeSort(latitudes, lines, processes) / 1000.0 << "s using " << processes << " thread(s)." << endl;
 		}
 		else if(input == 's')//special mode
