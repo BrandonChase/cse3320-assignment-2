@@ -1,3 +1,9 @@
+/*
+Brandon Chase ~ 1001132518
+
+CSE 3320-001 Assignment 2
+*/
+
 #include <string>
 #include <deque>
 #include <iostream>
